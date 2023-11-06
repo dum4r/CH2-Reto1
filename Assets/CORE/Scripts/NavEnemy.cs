@@ -5,18 +5,24 @@ using UnityEngine.AI;
 
 
 [RequireComponent (typeof (NavMeshAgent))]
+[RequireComponent (typeof (AudioSource))]
+[RequireComponent (typeof (Animator))]
 public class NavEnemy : MonoBehaviour {
 	public Transform[] pointsWay;
 	private int indx = 0;
 
 	public Transform target;
-	NavMeshAgent agente;
+	private NavMeshAgent agente;
+	private AudioSource   audio;
+	private Animator       anim;
+	public AudioClip  audioLose;
 
 	public float     rangoEnemigo;
 	public bool      enemigoActivo;
 
 	void Start() {
 		agente = GetComponent<NavMeshAgent>();
+		audio = GetComponent<AudioSource>();
 		StartCoroutine(MoverPoint()); // ! INCIAIAMOS LA COROUTINE
 	}
 
@@ -35,6 +41,11 @@ public class NavEnemy : MonoBehaviour {
 
 			yield return new WaitForSeconds(0.1f);
 		}
+	}
+
+	private void OnTriggerEnter(Collider other) {
+		if (other.CompareTag("Player"))
+			audio.PlayOneShot(audioLose);
 	}
 
 	private void OnDrawGizmos()	{

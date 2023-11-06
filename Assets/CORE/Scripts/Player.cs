@@ -1,4 +1,6 @@
 using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
 
 public class Player : MonoBehaviour {
 	private Animator            anim;
@@ -7,6 +9,12 @@ public class Player : MonoBehaviour {
 
 	public GameObject PanelDead;
 	public GameObject PanelGame;
+
+	public AudioSource efect;
+	private int indxStep = 0;
+	public List<AudioClip> ListSoundSteps = new List<AudioClip>();
+
+
 	public float  speed = 5.0f;
 	public float  mouseSensitivity = 2.0f;
 
@@ -37,8 +45,8 @@ public class Player : MonoBehaviour {
 		float horizontalMovement = Input.GetAxis("Horizontal") * speed;
 		float verticalMovement   = Input.GetAxis("Vertical")   * speed;
 		Vector3 movement = transform.forward * verticalMovement + transform.right * horizontalMovement;
+		anim.Play(movement.magnitude < 1 ? "Player_idle" : "Player_run");
 		controller.Move(movement * Time.deltaTime);
-
 
 		if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.E)) {
 			// Lanzar un rayo desde la posición de la cámara en la dirección de la mira.
@@ -67,5 +75,11 @@ public class Player : MonoBehaviour {
 
 	private void ActivePanelDead() {
 		PanelDead.SetActive(true);
+	}
+
+	private void playSoundStep(){
+		efect.PlayOneShot(ListSoundSteps[indxStep]);
+		indxStep++;
+		if (indxStep == ListSoundSteps.Count) indxStep = 0;
 	}
 }
